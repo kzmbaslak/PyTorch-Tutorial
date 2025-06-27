@@ -18,12 +18,13 @@ import matplotlib.pyplot as plt
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-# data loading
+#%% data loading
 def get_data_loaders(batch_size = 64):
     transform = transforms.Compose([
         transforms.ToTensor(),#goruntuyu tensore cevirir 0-255 -> 0-1 olceklenir
         transforms.Normalize((0.5,), (0.5,)), #piksel degerlerini -1-1 arasına olcekler.
         ])
+    
     #mnist veri setini indir ve egitim test kumelerini olustur.
     train_set = torchvision.datasets.MNIST("./data",train=True, download=True, transform=transform)
     test_set = torchvision.datasets.MNIST("./data", train=False, download=True, transform=transform)
@@ -35,7 +36,8 @@ def get_data_loaders(batch_size = 64):
     return train_loader, test_loader
     
 #train_loader, test_loader = get_data_loaders()
-# data visualization
+
+#%% data visualization
 def visualize_semples(loader,n):
     images,labels = next(iter(loader)) #ilk batch goruntu ve etiketleri alir
     #print(images[0].shape)
@@ -130,9 +132,9 @@ def test_mmodel(model, test_loader):
             images, labels = images.to(DEVICE), labels.to(DEVICE)
             predictions = model(images)
             
-            _, predicted = torch.max(predictions, 1) # maximum 1 adet deger sec
+            _, predictedIndices = torch.max(predictions, 1) # maximum 1 adet deger sec
             total += labels.size(0)
-            correct += (predicted == labels).sum().item()
+            correct += (predictedIndices == labels).sum().item()
     print(f"{100*correct/total:.3f}%")
 
 #test_mmodel(model, test_loader)
